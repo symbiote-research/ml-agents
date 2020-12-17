@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  agent:
+    image: symbioteai/ml-agent
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    tty: true
+    stdin_open: true
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+  unity:
+    image: symbioteai/unity
+    build:
+      context: .
+      dockerfile: Dockerfile.unity
+    extends: agent
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=1
