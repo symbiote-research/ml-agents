@@ -5,36 +5,39 @@ using UnityEditor.Build.Reporting;
 
 namespace Unity.MLAgents
 {
-    public class StandaloneBuildTest
+    public class Build
     {
-        const string k_OutputCommandLineFlag = "--mlagents-build-output-path";
-        const string k_SceneCommandLineFlag = "--mlagents-build-scene-path";
+        const string k_EnvironmentName = "-env";
 
-        public static void BuildStandalonePlayerOSX()
+        public static void BuildEnv()
         {
-            // Read commandline arguments for options
-            var outputPath = "testPlayer";
-            var scenePath = "Assets/ML-Agents/Examples/3DBall/Scenes/3DBall.unity";
+            var env = "";
+            var scenePath = "";
 
             var args = Environment.GetCommandLineArgs();
             for (var i = 0; i < args.Length - 1; i++)
             {
-                if (args[i] == k_OutputCommandLineFlag)
+                if (args[i] == k_EnvironmentName)
                 {
-                    outputPath = args[i + 1];
-                    Debug.Log($"Overriding output path to {outputPath}");
-                }
-                else if (args[i] == k_SceneCommandLineFlag)
-                {
-                    scenePath = args[i + 1];
+                    env = args[i + 1];
+                    scenePath = $"Assets/ML-Agents/Examples/{env}/Scenes/{env}.unity";
+                    System.Console.WriteLine($"Using scene from {scenePath}");
                 }
             }
+
+            if (env == "" || scenePath == "") {
+                System.Console.WriteLine("Env is empty!!!");
+                EditorApplication.Exit(1);
+            }
+
+            var outputPath = $"Linux64/{env}";
+            System.Console.WriteLine($"outputPath: {scenePath}");
 
             string[] scenes = { scenePath };
             var buildResult = BuildPipeline.BuildPlayer(
                 scenes,
                 outputPath,
-                BuildTarget.StandaloneOSX,
+                BuildTarget.StandaloneLinux64,
                 BuildOptions.None
             );
             var isOk = buildResult.summary.result == BuildResult.Succeeded;

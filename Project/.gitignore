@@ -1,3 +1,9 @@
+# build directory
+Linux64
+
+*.onnx
+*.meta
+
 /[Ll]ibrary/
 /Logs/
 /[Tt]emp/
